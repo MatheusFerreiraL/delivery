@@ -27,6 +27,6 @@ public class Kitchen {
 
   // This annotation is optional, but it is a good practice to use it. If we don't
   // use it, the column name will be the attribute name.
-  @Column(name = "name")
+  @Column(name = "name", nullable = false)
   private String name;
 }
