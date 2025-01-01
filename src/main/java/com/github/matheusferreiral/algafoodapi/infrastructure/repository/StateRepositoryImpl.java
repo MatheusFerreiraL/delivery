@@ -5,15 +5,17 @@ import com.github.matheusferreiral.algafoodapi.domain.repository.StateRepository
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.List;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+@Repository
 public class StateRepositoryImpl implements StateRepository {
 
   @PersistenceContext EntityManager manager;
 
   @Override
   public List<State> list() {
-    return manager.createQuery("from state", State.class).getResultList();
+    return manager.createQuery("from State", State.class).getResultList();
   }
 
   @Override

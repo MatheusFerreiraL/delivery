@@ -5,15 +5,17 @@ import com.github.matheusferreiral.algafoodapi.domain.repository.CityRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.List;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+@Repository
 public class CityRepositoryImpl implements CityRepository {
 
   @PersistenceContext EntityManager manager;
 
   @Override
   public List<City> list() {
-    return manager.createQuery("from city", City.class).getResultList();
+    return manager.createQuery("from City", City.class).getResultList();
   }
 
   @Override

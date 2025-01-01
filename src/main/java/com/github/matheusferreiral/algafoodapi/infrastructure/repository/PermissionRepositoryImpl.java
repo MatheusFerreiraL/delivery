@@ -5,15 +5,17 @@ import com.github.matheusferreiral.algafoodapi.domain.repository.PermissionRepos
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.List;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+@Repository
 public class PermissionRepositoryImpl implements PermissionRepository {
 
   @PersistenceContext EntityManager manager;
 
   @Override
   public List<Permission> list() {
-    return manager.createQuery("from permission", Permission.class).getResultList();
+    return manager.createQuery("from Permission", Permission.class).getResultList();
   }
 
   @Override

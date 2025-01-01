@@ -6,15 +6,17 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+@Repository
 public class KitchenRepositoryImpl implements KitchenRepository {
 
   @PersistenceContext private EntityManager manager;
 
   @Override
   public List<Kitchen> list() {
-    TypedQuery<Kitchen> query = manager.createQuery("from kitchen", Kitchen.class);
+    TypedQuery<Kitchen> query = manager.createQuery("from Kitchen", Kitchen.class);
 
     return query.getResultList();
   }
