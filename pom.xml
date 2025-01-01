@@ -60,6 +60,11 @@
       <artifactId>lombok</artifactId>
       <scope>annotationProcessor</scope>
     </dependency>
+    <!--    The following dependency add support for XML requests -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-xml</artifactId>
+    </dependency>
 
   </dependencies>
 
