@@ -22,6 +22,6 @@ public class PaymentMethod {
   @EqualsAndHashCode.Include
   private Long id;
 
-  @Column(name = "description")
+  @Column(name = "description", nullable = false)
   private String description;
 }

@@ -5,6 +5,7 @@ import com.github.matheusferreiral.algafoodapi.domain.repository.PaymentMethodRe
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 public class PaymentMethodRepositoryImpl implements PaymentMethodRepository {
 
@@ -20,11 +21,13 @@ public class PaymentMethodRepositoryImpl implements PaymentMethodRepository {
     return manager.find(PaymentMethod.class, id);
   }
 
+  @Transactional
   @Override
   public PaymentMethod save(PaymentMethod paymentMethod) {
     return manager.merge(paymentMethod);
   }
 
+  @Transactional
   @Override
   public void remove(PaymentMethod paymentMethod) {
     paymentMethod = findById(paymentMethod.getId());
