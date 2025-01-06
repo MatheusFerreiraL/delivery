@@ -4,6 +4,8 @@ import com.github.matheusferreiral.algafoodapi.domain.model.Kitchen;
 import com.github.matheusferreiral.algafoodapi.domain.repository.KitchenRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +23,11 @@ public class KitchenController {
   }
 
   @GetMapping("/{kitchenId}") // The '{kitchenId}' is called path variable, and can receive any name
-  public Kitchen findById(@PathVariable Long kitchenId) {
-    return kitchenRepository.findById(kitchenId);
+  public ResponseEntity<?> findById(@PathVariable Long kitchenId) {
+    Kitchen kitchen = kitchenRepository.findById(kitchenId);
+    if (kitchen == null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Kitchen not found!");
+    }
+    return ResponseEntity.status(HttpStatus.OK).body(kitchen);
   }
 }
