@@ -5,8 +5,10 @@ import com.github.matheusferreiral.algafoodapi.domain.repository.KitchenReposito
 import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,5 +55,26 @@ public class KitchenController {
     BeanUtils.copyProperties(kitchen, currentKitchen, "id");
     currentKitchen = kitchenRepository.save(currentKitchen);
     return ResponseEntity.status(HttpStatus.OK).body(currentKitchen);
+  }
+
+  @DeleteMapping("/{kitchenId}")
+  public ResponseEntity<?> remove(@PathVariable Long kitchenId) {
+
+    try {
+      Kitchen kitchen = kitchenRepository.findById(kitchenId);
+
+      if (kitchen == null) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Kitchen not found! :/");
+      }
+      kitchenRepository.remove(kitchen);
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+
+    } catch (DataIntegrityViolationException dataIntegrityViolationException) {
+      return ResponseEntity.status(HttpStatus.CONFLICT)
+          .body(
+              dataIntegrityViolationException
+                  .getMessage()); // Conflict is code 409. Using the 400 would be correct as well,
+                                  // but it is less specific
+    }
   }
 }
