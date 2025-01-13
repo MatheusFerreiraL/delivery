@@ -1,5 +1,6 @@
 package com.github.matheusferreiral.algafoodapi.infrastructure.repository;
 
+import com.github.matheusferreiral.algafoodapi.domain.exception.EntityNotFoundException;
 import com.github.matheusferreiral.algafoodapi.domain.model.Kitchen;
 import com.github.matheusferreiral.algafoodapi.domain.repository.KitchenRepository;
 import jakarta.persistence.EntityManager;
@@ -24,7 +25,13 @@ public class KitchenRepositoryImpl implements KitchenRepository {
 
   @Override
   public Kitchen findById(Long id) {
-    return manager.find(Kitchen.class, id);
+    Kitchen kitchen = manager.find(Kitchen.class, id);
+
+    if (kitchen == null) {
+      throw new EntityNotFoundException("Kitchen Entity not found");
+    }
+
+    return kitchen;
   }
 
   @Transactional
@@ -32,12 +39,12 @@ public class KitchenRepositoryImpl implements KitchenRepository {
   public Kitchen save(Kitchen kitchen) {
     return manager.merge(kitchen);
   }
- 
+
   @Transactional
   @Override
   public void remove(Long id) {
     Kitchen kitchen = findById(id);
-    
+
     if (kitchen == null) {
       throw new EmptyResultDataAccessException(1);
     }

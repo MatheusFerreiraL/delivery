@@ -3,7 +3,6 @@ package com.github.matheusferreiral.algafoodapi.api;
 import com.github.matheusferreiral.algafoodapi.domain.exception.EntityInUseException;
 import com.github.matheusferreiral.algafoodapi.domain.exception.EntityNotFoundException;
 import com.github.matheusferreiral.algafoodapi.domain.model.Kitchen;
-import com.github.matheusferreiral.algafoodapi.domain.repository.KitchenRepository;
 import com.github.matheusferreiral.algafoodapi.domain.service.KitchenService;
 import java.util.List;
 import org.springframework.beans.BeanUtils;
@@ -24,22 +23,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/kitchens")
 public class KitchenController {
 
-  @Autowired private KitchenRepository kitchenRepository;
-
   @Autowired private KitchenService kitchenService;
 
   @GetMapping
   public List<Kitchen> list() {
-    return kitchenRepository.list();
+    return kitchenService.list();
   }
 
   @GetMapping("/{kitchenId}") // The '{kitchenId}' is called path variable, and can receive any name
   public ResponseEntity<?> findById(@PathVariable Long kitchenId) {
-    Kitchen kitchen = kitchenRepository.findById(kitchenId);
-    if (kitchen == null) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Kitchen not found!");
+    try {
+      Kitchen kitchen = kitchenService.findById(kitchenId);
+      return ResponseEntity.status(HttpStatus.OK).body(kitchen);
+
+    } catch (EntityNotFoundException entityNotFoundException) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(entityNotFoundException.getMessage());
     }
-    return ResponseEntity.status(HttpStatus.OK).body(kitchen);
   }
 
   @PostMapping
@@ -50,15 +49,16 @@ public class KitchenController {
 
   @PutMapping("/{kitchenId}")
   public ResponseEntity<?> update(@PathVariable Long kitchenId, @RequestBody Kitchen kitchen) {
-    Kitchen currentKitchen = kitchenRepository.findById(kitchenId);
+    try {
+      Kitchen currentKitchen = kitchenService.findById(kitchenId);
 
-    if (currentKitchen == null) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Kitchen not found! :/");
+      // from the third parameter onwards, are properties that will be ignored on the 'copy & paste'
+      BeanUtils.copyProperties(kitchen, currentKitchen, "id");
+      currentKitchen = kitchenService.save(currentKitchen);
+      return ResponseEntity.status(HttpStatus.OK).body(currentKitchen);
+    } catch (EntityNotFoundException entityNotFoundException) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(entityNotFoundException.getMessage());
     }
-    // from the third parameter onwards, are properties that will be ignored on the 'copy & paste'
-    BeanUtils.copyProperties(kitchen, currentKitchen, "id");
-    currentKitchen = kitchenService.save(currentKitchen);
-    return ResponseEntity.status(HttpStatus.OK).body(currentKitchen);
   }
 
   @DeleteMapping("/{kitchenId}")
