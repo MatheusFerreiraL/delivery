@@ -1,11 +1,13 @@
 package com.github.matheusferreiral.algafoodapi.api;
 
+import com.github.matheusferreiral.algafoodapi.domain.exception.EntityInUseException;
+import com.github.matheusferreiral.algafoodapi.domain.exception.EntityNotFoundException;
 import com.github.matheusferreiral.algafoodapi.domain.model.Kitchen;
 import com.github.matheusferreiral.algafoodapi.domain.repository.KitchenRepository;
+import com.github.matheusferreiral.algafoodapi.domain.service.KitchenService;
 import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +26,8 @@ public class KitchenController {
 
   @Autowired private KitchenRepository kitchenRepository;
 
+  @Autowired private KitchenService kitchenService;
+
   @GetMapping
   public List<Kitchen> list() {
     return kitchenRepository.list();
@@ -41,7 +45,7 @@ public class KitchenController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public Kitchen add(@RequestBody Kitchen kitchen) {
-    return kitchenRepository.save(kitchen);
+    return kitchenService.save(kitchen);
   }
 
   @PutMapping("/{kitchenId}")
@@ -53,7 +57,7 @@ public class KitchenController {
     }
     // from the third parameter onwards, are properties that will be ignored on the 'copy & paste'
     BeanUtils.copyProperties(kitchen, currentKitchen, "id");
-    currentKitchen = kitchenRepository.save(currentKitchen);
+    currentKitchen = kitchenService.save(currentKitchen);
     return ResponseEntity.status(HttpStatus.OK).body(currentKitchen);
   }
 
@@ -61,20 +65,18 @@ public class KitchenController {
   public ResponseEntity<?> remove(@PathVariable Long kitchenId) {
 
     try {
-      Kitchen kitchen = kitchenRepository.findById(kitchenId);
-
-      if (kitchen == null) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Kitchen not found! :/");
-      }
-      kitchenRepository.remove(kitchen);
+      kitchenService.remove(kitchenId);
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 
-    } catch (DataIntegrityViolationException dataIntegrityViolationException) {
+    } catch (EntityNotFoundException entityNotFoundException) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(entityNotFoundException.getMessage());
+
+    } catch (EntityInUseException entityInUseException) {
       return ResponseEntity.status(HttpStatus.CONFLICT)
           .body(
-              dataIntegrityViolationException
+              entityInUseException
                   .getMessage()); // Conflict is code 409. Using the 400 would be correct as well,
-                                  // but it is less specific
+      // but it is less specific
     }
   }
 }
