@@ -8,6 +8,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class RestaurantRepositoryImpl implements RestaurantRepository {
@@ -31,6 +32,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
     return restaurant;
   }
 
+  @Transactional
   @Override
   public Restaurant save(Restaurant restaurant) {
     return manager.merge(restaurant);

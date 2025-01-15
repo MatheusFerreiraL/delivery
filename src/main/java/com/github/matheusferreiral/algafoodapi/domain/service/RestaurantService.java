@@ -25,4 +25,8 @@ public class RestaurantService {
           String.format("Restaurant under code << %d >> was NOT found! :(", restaurantId));
     }
   }
+  
+  public Restaurant save(Restaurant restaurant) {
+    return restaurantRepository.save(restaurant);
+  }
 }
