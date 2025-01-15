@@ -20,8 +20,7 @@ public class KitchenService {
 
   public Kitchen findById(Long kitchenId) {
     try {
-      Kitchen kitchen = kitchenRepository.findById(kitchenId);
-      return kitchen;
+      return kitchenRepository.findById(kitchenId);
     } catch (EntityNotFoundException entityNotFoundException) {
       throw new EntityNotFoundException(
           String.format("Kitchen under code << %d >> not found!", kitchenId));

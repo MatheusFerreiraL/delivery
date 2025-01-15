@@ -1,5 +1,6 @@
 package com.github.matheusferreiral.algafoodapi.infrastructure.repository;
 
+import com.github.matheusferreiral.algafoodapi.domain.exception.EntityNotFoundException;
 import com.github.matheusferreiral.algafoodapi.domain.model.Restaurant;
 import com.github.matheusferreiral.algafoodapi.domain.repository.RestaurantRepository;
 import jakarta.persistence.EntityManager;
@@ -22,7 +23,12 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 
   @Override
   public Restaurant findById(Long id) {
-    return manager.find(Restaurant.class, id);
+    Restaurant restaurant = manager.find(Restaurant.class, id);
+
+    if (restaurant == null) {
+      throw new EntityNotFoundException("Restaurant Entity not found!");
+    }
+    return restaurant;
   }
 
   @Override
