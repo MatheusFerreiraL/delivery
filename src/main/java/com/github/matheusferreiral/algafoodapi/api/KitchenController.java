@@ -32,13 +32,13 @@ public class KitchenController {
 
   @GetMapping("/{kitchenId}") // The '{kitchenId}' is called path variable, and can receive any name
   public ResponseEntity<?> findById(@PathVariable Long kitchenId) {
-    try {
-      Kitchen kitchen = kitchenService.findById(kitchenId);
-      return ResponseEntity.status(HttpStatus.OK).body(kitchen);
+    Kitchen kitchen = kitchenService.findById(kitchenId);
 
-    } catch (EntityNotFoundException entityNotFoundException) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(entityNotFoundException.getMessage());
+    if (kitchen == null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+          .body(String.format("Kitchen under code << %d >> not found!", kitchenId));
     }
+    return ResponseEntity.status(HttpStatus.OK).body(kitchen);
   }
 
   @PostMapping

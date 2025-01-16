@@ -27,9 +27,9 @@ public class KitchenRepositoryImpl implements KitchenRepository {
   public Kitchen findById(Long id) {
     Kitchen kitchen = manager.find(Kitchen.class, id);
 
-    if (kitchen == null) {
-      throw new EntityNotFoundException("Kitchen Entity not found");
-    }
+//    if (kitchen == null) {
+//      throw new EntityNotFoundException("Kitchen Entity not found");
+//    }
 
     return kitchen;
   }

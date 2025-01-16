@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -38,8 +37,15 @@ public class RestaurantController {
   }
 
   @PostMapping
-  @ResponseStatus(HttpStatus.CREATED)
-  public Restaurant add(@RequestBody Restaurant restaurant) {
-    return restaurantService.save(restaurant);
+  public ResponseEntity<?> add(@RequestBody Restaurant restaurant) {
+    try {
+      restaurant = restaurantService.save(restaurant);
+
+      return ResponseEntity.status(HttpStatus.CREATED).body(restaurant);
+
+    } catch (EntityNotFoundException entityNotFoundException) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+          .body(entityNotFoundException.getMessage());
+    }
   }
 }
