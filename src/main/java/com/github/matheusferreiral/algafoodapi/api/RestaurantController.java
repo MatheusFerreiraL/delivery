@@ -9,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -63,6 +64,16 @@ public class RestaurantController {
 
       currentRestaurant = restaurantService.save(currentRestaurant);
       return ResponseEntity.status(HttpStatus.OK).body(currentRestaurant);
+    } catch (EntityNotFoundException entityNotFoundException) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(entityNotFoundException.getMessage());
+    }
+  }
+
+  @DeleteMapping("{restaurantId}")
+  public ResponseEntity<?> remove(@PathVariable Long restaurantId) {
+    try {
+      restaurantService.remove(restaurantId);
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     } catch (EntityNotFoundException entityNotFoundException) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(entityNotFoundException.getMessage());
     }

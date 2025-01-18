@@ -42,4 +42,16 @@ public class RestaurantService {
     restaurant.setKitchen(kitchen);
     return restaurantRepository.save(restaurant);
   }
+
+  public void remove(Long restaurantId) {
+    try {
+      restaurantRepository.remove(restaurantId);
+    } catch (EntityNotFoundException entityNotFoundException) {
+      throw new EntityNotFoundException(
+          String.format(
+              "There is NOT a restaurant registered under the code << %d >>. "
+                  + "Please try again!",
+              restaurantId));
+    }
+  }
 }

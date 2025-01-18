@@ -7,6 +7,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,9 +39,14 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
     return manager.merge(restaurant);
   }
 
+  @Transactional
   @Override
-  public void remove(Restaurant restaurant) {
-    restaurant = findById(restaurant.getId());
+  public void remove(Long id) {
+    Restaurant restaurant = findById(id);
+
+    if (restaurant == null) {
+      throw new EmptyResultDataAccessException(1);
+    }
     manager.remove(restaurant);
   }
 }
