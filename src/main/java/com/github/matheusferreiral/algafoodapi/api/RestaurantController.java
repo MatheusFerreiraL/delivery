@@ -2,7 +2,6 @@ package com.github.matheusferreiral.algafoodapi.api;
 
 import com.github.matheusferreiral.algafoodapi.domain.exception.EntityNotFoundException;
 import com.github.matheusferreiral.algafoodapi.domain.model.Restaurant;
-import com.github.matheusferreiral.algafoodapi.domain.service.KitchenService;
 import com.github.matheusferreiral.algafoodapi.domain.service.RestaurantService;
 import java.util.List;
 import org.springframework.beans.BeanUtils;
@@ -23,17 +22,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class RestaurantController {
 
   @Autowired private RestaurantService restaurantService;
-  @Autowired private KitchenService kitchenService;
 
   @GetMapping
   public List<Restaurant> list() {
     return restaurantService.list();
   }
 
-  @GetMapping("/{kitchenId}")
-  public ResponseEntity<?> findById(@PathVariable Long kitchenId) {
+  @GetMapping("/{restaurantId}")
+  public ResponseEntity<?> findById(@PathVariable Long restaurantId) {
     try {
-      Restaurant restaurant = restaurantService.findById(kitchenId);
+      Restaurant restaurant = restaurantService.findById(restaurantId);
       return ResponseEntity.status(HttpStatus.OK).body(restaurant);
 
     } catch (EntityNotFoundException entityNotFoundException) {
@@ -69,7 +67,7 @@ public class RestaurantController {
     }
   }
 
-  @DeleteMapping("{restaurantId}")
+  @DeleteMapping("/{restaurantId}")
   public ResponseEntity<?> remove(@PathVariable Long restaurantId) {
     try {
       restaurantService.remove(restaurantId);
