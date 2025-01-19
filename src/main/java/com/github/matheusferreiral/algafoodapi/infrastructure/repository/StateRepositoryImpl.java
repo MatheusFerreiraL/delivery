@@ -1,10 +1,12 @@
 package com.github.matheusferreiral.algafoodapi.infrastructure.repository;
 
+import com.github.matheusferreiral.algafoodapi.domain.exception.EntityNotFoundException;
 import com.github.matheusferreiral.algafoodapi.domain.model.State;
 import com.github.matheusferreiral.algafoodapi.domain.repository.StateRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.List;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,8 +21,13 @@ public class StateRepositoryImpl implements StateRepository {
   }
 
   @Override
-  public State findByid(Long id) {
-    return manager.find(State.class, id);
+  public State findById(Long id) {
+    State state = manager.find(State.class, id);
+
+    if (state == null) {
+      throw new EntityNotFoundException("State entity not found");
+    }
+    return state;
   }
 
   @Transactional
@@ -31,8 +38,12 @@ public class StateRepositoryImpl implements StateRepository {
 
   @Transactional
   @Override
-  public void remove(State state) {
-    state = findByid(state.getId());
+  public void remove(Long id) {
+    State state = findById(id);
+
+    if (state == null) {
+      throw new EmptyResultDataAccessException(1);
+    }
     manager.remove(state);
   }
 }
