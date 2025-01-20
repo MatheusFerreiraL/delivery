@@ -1,10 +1,12 @@
 package com.github.matheusferreiral.algafoodapi.infrastructure.repository;
 
+import com.github.matheusferreiral.algafoodapi.domain.exception.EntityNotFoundException;
 import com.github.matheusferreiral.algafoodapi.domain.model.City;
 import com.github.matheusferreiral.algafoodapi.domain.repository.CityRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.List;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +22,12 @@ public class CityRepositoryImpl implements CityRepository {
 
   @Override
   public City findById(Long id) {
-    return manager.find(City.class, id);
+    City city = manager.find(City.class, id);
+
+    if (city == null) {
+      throw new EntityNotFoundException("City entity not found");
+    }
+    return city;
   }
 
   @Transactional
@@ -31,8 +38,12 @@ public class CityRepositoryImpl implements CityRepository {
 
   @Transactional
   @Override
-  public void remove(City city) {
-    city = findById(city.getId());
+  public void remove(Long cityId) {
+    City city = findById(cityId);
+
+    if (city == null) {
+      throw new EmptyResultDataAccessException(1);
+    }
     manager.remove(city);
   }
 }
