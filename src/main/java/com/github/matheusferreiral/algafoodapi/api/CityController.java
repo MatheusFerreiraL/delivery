@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,6 +56,16 @@ public class CityController {
       BeanUtils.copyProperties(city, currentCity, "id");
       currentCity = cityService.save(currentCity);
       return ResponseEntity.status(HttpStatus.OK).body(currentCity);
+    } catch (EntityNotFoundException entityNotFoundException) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(entityNotFoundException.getMessage());
+    }
+  }
+
+  @DeleteMapping("/{cityId}")
+  public ResponseEntity<?> remove(@PathVariable Long cityId) {
+    try {
+      cityService.remove(cityId);
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     } catch (EntityNotFoundException entityNotFoundException) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(entityNotFoundException.getMessage());
     }
