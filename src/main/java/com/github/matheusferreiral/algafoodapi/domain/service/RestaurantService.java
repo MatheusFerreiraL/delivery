@@ -7,6 +7,7 @@ import com.github.matheusferreiral.algafoodapi.domain.repository.KitchenReposito
 import com.github.matheusferreiral.algafoodapi.domain.repository.RestaurantRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,16 +32,18 @@ public class RestaurantService {
 
   public Restaurant save(Restaurant restaurant) {
     Long kitchenId = restaurant.getKitchen().getId();
-    Kitchen kitchen = kitchenRepository.findById(kitchenId);
-
-    if (kitchen == null) {
+    try {
+      Kitchen kitchen = kitchenRepository.findById(kitchenId);
+      restaurant.setKitchen(kitchen);
+      return restaurantRepository.save(restaurant);
+    } catch (EntityNotFoundException e) {
       throw new EntityNotFoundException(
           String.format(
               "Kithchen under code << %d >> was NOT found. Please, try " + "again!", kitchenId));
+    } catch (DataIntegrityViolationException dataIntegrityViolationException) {
+      throw new DataIntegrityViolationException(
+          "The update could NOT be continued :( Please, try again!");
     }
-
-    restaurant.setKitchen(kitchen);
-    return restaurantRepository.save(restaurant);
   }
 
   public void remove(Long restaurantId) {

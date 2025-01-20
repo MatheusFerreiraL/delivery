@@ -29,7 +29,12 @@ public class KitchenService {
 
   // the 'save' method works for both creating and updating kitchens
   public Kitchen save(Kitchen kitchen) {
-    return kitchenRepository.save(kitchen);
+    try {
+      return kitchenRepository.save(kitchen);
+    } catch (DataIntegrityViolationException dataIntegrityViolationException) {
+      throw new DataIntegrityViolationException(
+          "The update could NOT be continued :( Please, try again! [E-KS-001]");
+    }
   }
 
   public void remove(Long kitchenId) {

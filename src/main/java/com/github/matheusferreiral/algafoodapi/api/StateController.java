@@ -45,7 +45,7 @@ public class StateController {
     try {
       state = stateService.save(state);
       return ResponseEntity.status(HttpStatus.CREATED).body(state);
-    } catch (EntityNotFoundException entityNotFoundException) {
+    } catch (EntityNotFoundException | DataIntegrityViolationException entityNotFoundException) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
           .body(entityNotFoundException.getMessage());
     }
