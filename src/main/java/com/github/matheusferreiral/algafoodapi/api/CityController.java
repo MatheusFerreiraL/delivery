@@ -58,6 +58,9 @@ public class CityController {
       return ResponseEntity.status(HttpStatus.OK).body(currentCity);
     } catch (EntityNotFoundException entityNotFoundException) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(entityNotFoundException.getMessage());
+    } catch (DataIntegrityViolationException dataIntegrityViolationException) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+          .body(dataIntegrityViolationException.getMessage());
     }
   }
 

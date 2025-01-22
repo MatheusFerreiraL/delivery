@@ -36,7 +36,7 @@ public class CityService {
       return cityRepository.save(city);
     } catch (DataIntegrityViolationException dataIntegrityViolationException) {
       throw new DataIntegrityViolationException(
-          "The update could NOT be continued :( Please, try again! [E-CS-001");
+          "The update could NOT be continued :( Please, try again! [E-CS-001]");
     } catch (EntityNotFoundException entityNotFoundException) {
       throw new EntityNotFoundException(
           String.format(
