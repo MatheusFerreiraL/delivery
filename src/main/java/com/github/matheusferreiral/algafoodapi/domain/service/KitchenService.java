@@ -5,6 +5,7 @@ import com.github.matheusferreiral.algafoodapi.domain.exception.EntityNotFoundEx
 import com.github.matheusferreiral.algafoodapi.domain.model.Kitchen;
 import com.github.matheusferreiral.algafoodapi.domain.repository.KitchenRepository;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -15,10 +16,10 @@ public class KitchenService {
   @Autowired private KitchenRepository kitchenRepository;
 
   public List<Kitchen> list() {
-    return kitchenRepository.list();
+    return kitchenRepository.findAll();
   }
 
-  public Kitchen findById(Long kitchenId) {
+  public Optional<Kitchen> findById(Long kitchenId) {
     try {
       return kitchenRepository.findById(kitchenId);
     } catch (EntityNotFoundException entityNotFoundException) {
@@ -33,17 +34,21 @@ public class KitchenService {
       return kitchenRepository.save(kitchen);
     } catch (DataIntegrityViolationException dataIntegrityViolationException) {
       throw new DataIntegrityViolationException(
-          "The update could NOT be continued :( Please, try again! [E-KS-001]");
+          "This operation could NOT be continued :( Please, try again! [E-DIVE-KS-001]");
     }
   }
 
   public void remove(Long kitchenId) {
-    try {
-      kitchenRepository.remove(kitchenId);
+    kitchenRepository
+        .findById(kitchenId)
+        .orElseThrow(
+            () ->
+                new EntityNotFoundException(
+                    String.format(
+                        "There is NOT a kitchen registered under the code << %d >>", kitchenId)));
 
-    } catch (EntityNotFoundException entityNotFoundException) {
-      throw new EntityNotFoundException(
-          String.format("There is NOT a kitchen registered under the code << %d >>", kitchenId));
+    try {
+      kitchenRepository.deleteById(kitchenId);
 
     } catch (DataIntegrityViolationException dataIntegrityViolationException) {
       throw new EntityInUseException(

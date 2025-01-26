@@ -57,7 +57,7 @@ public class RestaurantController {
           .body(entityNotFoundException.getMessage());
     }
   }
-
+  //NOTE: DataIntegrityViolation exception needs to be fixed!
   @PutMapping("/{restaurantId}")
   public ResponseEntity<?> update(
       @PathVariable Long restaurantId, @RequestBody Restaurant restaurant) {
@@ -68,8 +68,8 @@ public class RestaurantController {
 
       currentRestaurant = restaurantService.save(currentRestaurant);
       return ResponseEntity.status(HttpStatus.OK).body(currentRestaurant);
-    } catch (EntityNotFoundException | DataIntegrityViolationException entityNotFoundException) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(entityNotFoundException.getMessage());
+    } catch (EntityNotFoundException | DataIntegrityViolationException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
   }
 

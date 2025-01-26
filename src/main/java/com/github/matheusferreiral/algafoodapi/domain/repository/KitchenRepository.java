@@ -1,14 +1,8 @@
 package com.github.matheusferreiral.algafoodapi.domain.repository;
 
 import com.github.matheusferreiral.algafoodapi.domain.model.Kitchen;
-import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface KitchenRepository {
-  List<Kitchen> list();
-
-  Kitchen findById(Long id);
-
-  Kitchen save(Kitchen kitchen);
-
-  void remove(Long id);
-}
+@Repository
+public interface KitchenRepository extends JpaRepository<Kitchen, Long> {}

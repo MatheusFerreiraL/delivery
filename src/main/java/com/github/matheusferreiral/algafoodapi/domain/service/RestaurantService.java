@@ -32,17 +32,22 @@ public class RestaurantService {
 
   public Restaurant save(Restaurant restaurant) {
     Long kitchenId = restaurant.getKitchen().getId();
+    Kitchen kitchen =
+        kitchenRepository
+            .findById(kitchenId)
+            .orElseThrow(
+                () ->
+                    new EntityNotFoundException(
+                        String.format(
+                            "Kithchen under code << %d >> was NOT found. Please, try " + "again!",
+                            kitchenId)));
     try {
-      Kitchen kitchen = kitchenRepository.findById(kitchenId);
       restaurant.setKitchen(kitchen);
       return restaurantRepository.save(restaurant);
-    } catch (EntityNotFoundException e) {
-      throw new EntityNotFoundException(
-          String.format(
-              "Kithchen under code << %d >> was NOT found. Please, try " + "again!", kitchenId));
+
     } catch (DataIntegrityViolationException dataIntegrityViolationException) {
       throw new DataIntegrityViolationException(
-          "The update could NOT be continued :( Please, try again!");
+          "This operation could NOT be continued :( Please, try again!");
     }
   }
 
