@@ -4,12 +4,14 @@ import com.github.matheusferreiral.algafoodapi.domain.exception.EntityNotFoundEx
 import com.github.matheusferreiral.algafoodapi.domain.model.City;
 import com.github.matheusferreiral.algafoodapi.domain.service.CityService;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,12 +32,12 @@ public class CityController {
 
   @GetMapping("/{cityId}")
   public ResponseEntity<?> findById(@PathVariable Long cityId) {
-    try {
-      City city = cityService.findById(cityId);
-      return ResponseEntity.status(HttpStatus.OK).body(city);
-    } catch (EntityNotFoundException entityNotFoundException) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(entityNotFoundException.getMessage());
+    Optional<City> city = cityService.findById(cityId);
+    if (city.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+          .body(String.format("City under code << %d >> not found!", cityId));
     }
+    return ResponseEntity.status(HttpStatus.OK).body(city);
   }
 
   @PostMapping
@@ -51,8 +53,14 @@ public class CityController {
 
   @PutMapping("/{cityId}")
   public ResponseEntity<?> update(@PathVariable Long cityId, @RequestBody City city) {
+    Optional<City> optionalCity = cityService.findById(cityId);
+    if (optionalCity.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+          .body(String.format("City under code << %d >> not found!", cityId));
+    }
+
     try {
-      City currentCity = cityService.findById(cityId);
+      City currentCity = optionalCity.get();
       BeanUtils.copyProperties(city, currentCity, "id");
       currentCity = cityService.save(currentCity);
       return ResponseEntity.status(HttpStatus.OK).body(currentCity);
