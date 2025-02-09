@@ -1,15 +1,8 @@
 package com.github.matheusferreiral.algafoodapi.domain.repository;
 
 import com.github.matheusferreiral.algafoodapi.domain.model.State;
-import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface StateRepository {
-
-  List<State> list();
-
-  State findById(Long id);
-
-  State save(State state);
-
-  void remove(Long id);
-}
+@Repository
+public interface StateRepository extends JpaRepository<State, Long> {}

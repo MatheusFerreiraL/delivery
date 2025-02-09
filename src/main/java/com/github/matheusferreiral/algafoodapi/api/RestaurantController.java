@@ -7,6 +7,7 @@ import com.github.matheusferreiral.algafoodapi.domain.service.RestaurantService;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -36,13 +37,12 @@ public class RestaurantController {
 
   @GetMapping("/{restaurantId}")
   public ResponseEntity<?> findById(@PathVariable Long restaurantId) {
-    try {
-      Restaurant restaurant = restaurantService.findById(restaurantId);
-      return ResponseEntity.status(HttpStatus.OK).body(restaurant);
-
-    } catch (EntityNotFoundException entityNotFoundException) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(entityNotFoundException.getMessage());
+    Optional<Restaurant> restaurant = restaurantService.findById(restaurantId);
+    if (restaurant.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+          .body(String.format("Restaurant under code << %d >> not found!", restaurantId));
     }
+    return ResponseEntity.status(HttpStatus.OK).body(restaurant);
   }
 
   @PostMapping
@@ -52,18 +52,25 @@ public class RestaurantController {
 
       return ResponseEntity.status(HttpStatus.CREATED).body(restaurant);
 
-    } catch (EntityNotFoundException entityNotFoundException) {
+    } catch (EntityNotFoundException | DataIntegrityViolationException entityNotFoundException) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST)
           .body(entityNotFoundException.getMessage());
     }
   }
-  //NOTE: DataIntegrityViolation exception needs to be fixed!
+
+  // NOTE: DataIntegrityViolation exception needs to be fixed!
   @PutMapping("/{restaurantId}")
   public ResponseEntity<?> update(
       @PathVariable Long restaurantId, @RequestBody Restaurant restaurant) {
-    try {
-      Restaurant currentRestaurant = restaurantService.findById(restaurantId);
 
+    Optional<Restaurant> optionalRestaurant = restaurantService.findById(restaurantId);
+    if (optionalRestaurant.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+          .body(String.format("Restaurant under code << %d >> not found!", restaurantId));
+    }
+
+    try {
+      Restaurant currentRestaurant = optionalRestaurant.get();
       BeanUtils.copyProperties(restaurant, currentRestaurant, "id");
 
       currentRestaurant = restaurantService.save(currentRestaurant);
@@ -76,8 +83,13 @@ public class RestaurantController {
   @PatchMapping("/{restaurantId}")
   public ResponseEntity<?> partialUpdate(
       @PathVariable Long restaurantId, @RequestBody Map<String, Object> fields) {
+    Optional<Restaurant> optionalRestaurant = restaurantService.findById(restaurantId);
+    if (optionalRestaurant.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+          .body(String.format("Restaurant under code << %d >> not found!", restaurantId));
+    }
     try {
-      Restaurant currentRestaurant = restaurantService.findById(restaurantId);
+      Restaurant currentRestaurant = optionalRestaurant.get();
       merge(fields, currentRestaurant);
       return update(restaurantId, currentRestaurant);
     } catch (EntityNotFoundException entityNotFoundException) {

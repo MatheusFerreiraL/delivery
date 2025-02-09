@@ -6,6 +6,7 @@ import com.github.matheusferreiral.algafoodapi.domain.model.Restaurant;
 import com.github.matheusferreiral.algafoodapi.domain.repository.KitchenRepository;
 import com.github.matheusferreiral.algafoodapi.domain.repository.RestaurantRepository;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -17,10 +18,10 @@ public class RestaurantService {
   @Autowired private KitchenRepository kitchenRepository;
 
   public List<Restaurant> list() {
-    return restaurantRepository.list();
+    return restaurantRepository.findAll();
   }
 
-  public Restaurant findById(Long restaurantId) {
+  public Optional<Restaurant> findById(Long restaurantId) {
     try {
       return restaurantRepository.findById(restaurantId);
 
@@ -52,8 +53,16 @@ public class RestaurantService {
   }
 
   public void remove(Long restaurantId) {
+    restaurantRepository
+        .findById(restaurantId)
+        .orElseThrow(
+            () ->
+                new EntityNotFoundException(
+                    String.format(
+                        "There is NOT a restaurant registered under the code << %d >>. Please try again!",
+                        restaurantId)));
     try {
-      restaurantRepository.remove(restaurantId);
+      restaurantRepository.deleteById(restaurantId);
     } catch (EntityNotFoundException entityNotFoundException) {
       throw new EntityNotFoundException(
           String.format(

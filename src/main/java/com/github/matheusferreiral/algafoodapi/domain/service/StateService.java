@@ -5,6 +5,7 @@ import com.github.matheusferreiral.algafoodapi.domain.exception.EntityNotFoundEx
 import com.github.matheusferreiral.algafoodapi.domain.model.State;
 import com.github.matheusferreiral.algafoodapi.domain.repository.StateRepository;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -15,10 +16,10 @@ public class StateService {
   @Autowired private StateRepository stateRepository;
 
   public List<State> list() {
-    return stateRepository.list();
+    return stateRepository.findAll();
   }
 
-  public State findById(Long stateId) {
+  public Optional<State> findById(Long stateId) {
     try {
       return stateRepository.findById(stateId);
     } catch (EntityNotFoundException entityNotFoundException) {
@@ -33,7 +34,7 @@ public class StateService {
       return state;
     } catch (DataIntegrityViolationException dataIntegrityViolationException) {
       throw new DataIntegrityViolationException(
-          "The update could NOT be continued :( Please, try again! [E-SS-001]");
+          "This operation could NOT be continued :( Please, try again! [E-DIVE-SS-001]");
     } catch (EntityNotFoundException entityNotFoundException) {
       throw new EntityNotFoundException(
           String.format(
@@ -43,8 +44,16 @@ public class StateService {
   }
 
   public void remove(Long stateId) {
+    stateRepository
+        .findById(stateId)
+        .orElseThrow(
+            () ->
+                new EntityNotFoundException(
+                    String.format(
+                        "State under code << %d >> was NOT found :( Please, try again!",
+                        stateId)));
     try {
-      stateRepository.remove(stateId);
+      stateRepository.deleteById(stateId);
     } catch (EntityNotFoundException entityNotFoundException) {
       throw new EntityNotFoundException(
           String.format("State under code << %d >> was NOT found :( Please, try again!", stateId));

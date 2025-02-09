@@ -5,6 +5,7 @@ import com.github.matheusferreiral.algafoodapi.domain.exception.EntityNotFoundEx
 import com.github.matheusferreiral.algafoodapi.domain.model.State;
 import com.github.matheusferreiral.algafoodapi.domain.service.StateService;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -32,12 +33,12 @@ public class StateController {
 
   @GetMapping("/{stateId}")
   public ResponseEntity<?> findById(@PathVariable Long stateId) {
-    try {
-      State state = stateService.findById(stateId);
-      return ResponseEntity.status(HttpStatus.OK).body(state);
-    } catch (EntityNotFoundException entityNotFoundException) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(entityNotFoundException.getMessage());
+      Optional<State> state = stateService.findById(stateId);
+      if(state.isEmpty()) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("State under code << %d >> not found!",
+            stateId));
     }
+      return ResponseEntity.status(HttpStatus.OK).body(state);
   }
 
   @PostMapping
@@ -53,8 +54,14 @@ public class StateController {
 
   @PutMapping("/{stateId}")
   public ResponseEntity<?> update(@PathVariable Long stateId, @RequestBody State state) {
+    Optional<State> optionalState = stateService.findById(stateId);
+    if (optionalState.isEmpty()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+          .body(String.format("State under code << %d >> not found!", stateId));
+    }
+
     try {
-      State currentState = stateService.findById(stateId);
+      State currentState = optionalState.get();
       BeanUtils.copyProperties(state, currentState, "id");
       currentState = stateService.save(currentState);
       return ResponseEntity.status(HttpStatus.OK).body(currentState);

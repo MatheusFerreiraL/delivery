@@ -32,16 +32,20 @@ public class CityService {
   public City save(City city) {
     Long stateId = city.getState().getId();
     try {
-      State state = stateRepository.findById(stateId);
-      city.setState(state);
+      Optional<State> state = stateRepository.findById(stateId);
+      if (state.isEmpty()) {
+        throw new EntityNotFoundException(
+            String.format(
+                "State under code << %d >> was NOT found. :( Please, try again!", stateId));
+      }
+      city.setState(state.get());
       return cityRepository.save(city);
     } catch (DataIntegrityViolationException dataIntegrityViolationException) {
       throw new DataIntegrityViolationException(
           "This operation could NOT be continued :( Please, try again! [E-DIVE-CS-001]");
     } catch (EntityNotFoundException entityNotFoundException) {
       throw new EntityNotFoundException(
-          String.format(
-              "State under code << %d >> was NOT found. :( Please, try " + "again!", stateId));
+          String.format("State under code << %d >> was NOT found. :( Please, try again!", stateId));
     }
   }
 
