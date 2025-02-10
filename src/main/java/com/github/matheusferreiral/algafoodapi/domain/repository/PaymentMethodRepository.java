@@ -1,15 +1,6 @@
 package com.github.matheusferreiral.algafoodapi.domain.repository;
 
 import com.github.matheusferreiral.algafoodapi.domain.model.PaymentMethod;
-import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface PaymentMethodRepository {
-
-  List<PaymentMethod> list();
-
-  PaymentMethod findById(Long id);
-
-  PaymentMethod save(PaymentMethod paymentMethod);
-
-  void remove(PaymentMethod paymentMethod);
-}
+public interface PaymentMethodRepository extends JpaRepository<PaymentMethod, Long> {}
