@@ -3,6 +3,7 @@ package com.github.matheusferreiral.algafoodapi.api;
 import com.github.matheusferreiral.algafoodapi.domain.exception.EntityInUseException;
 import com.github.matheusferreiral.algafoodapi.domain.exception.EntityNotFoundException;
 import com.github.matheusferreiral.algafoodapi.domain.model.Kitchen;
+import com.github.matheusferreiral.algafoodapi.domain.repository.KitchenRepository;
 import com.github.matheusferreiral.algafoodapi.domain.service.KitchenService;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController // include @ResponseBody & @Controller annotations
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class KitchenController {
 
   @Autowired private KitchenService kitchenService;
+  @Autowired private KitchenRepository kitchenRepository;
 
   @GetMapping
   public List<Kitchen> list() {
@@ -92,5 +95,10 @@ public class KitchenController {
                   .getMessage()); // Conflict is code 409. Using the 400 would be correct as well,
       // but it is less specific
     }
+  }
+
+  @GetMapping("/by-name")
+  public List<Kitchen> kitchensByName(@RequestParam String name) {
+    return kitchenRepository.findAllByName(name);
   }
 }
