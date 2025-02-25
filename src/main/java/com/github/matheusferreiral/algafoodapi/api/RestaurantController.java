@@ -137,7 +137,7 @@ public class RestaurantController {
   @GetMapping("/by-name-and-kitchenId")
   public List<Restaurant> findByNameAndKitchenId(
       @RequestParam String name, @RequestParam Long kitchenId) {
-    return restaurantRepository.findByNameContainingAndKitchenId(name, kitchenId);
+    return restaurantRepository.queryByName(name, kitchenId);
   }
 
   @GetMapping("/first-by-name")
