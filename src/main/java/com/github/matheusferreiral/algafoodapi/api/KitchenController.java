@@ -101,4 +101,14 @@ public class KitchenController {
   public List<Kitchen> kitchensByName(@RequestParam String name) {
     return kitchenRepository.findAllByName(name);
   }
+
+  @GetMapping("/by-unique-name")
+  public Optional<Kitchen> uniqueKitchenByName(@RequestParam String name) {
+    return kitchenRepository.findByName(name);
+  }
+
+  @GetMapping("/by-name-containing")
+  public List<Kitchen> kitchensByNameContaining(@RequestParam String name) {
+    return kitchenRepository.findAllByNameContaining(name);
+  }
 }

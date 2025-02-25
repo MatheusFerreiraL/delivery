@@ -3,8 +3,10 @@ package com.github.matheusferreiral.algafoodapi.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.matheusferreiral.algafoodapi.domain.exception.EntityNotFoundException;
 import com.github.matheusferreiral.algafoodapi.domain.model.Restaurant;
+import com.github.matheusferreiral.algafoodapi.domain.repository.RestaurantRepository;
 import com.github.matheusferreiral.algafoodapi.domain.service.RestaurantService;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -29,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class RestaurantController {
 
   @Autowired private RestaurantService restaurantService;
+  @Autowired private RestaurantRepository restaurantRepository;
 
   @GetMapping
   public List<Restaurant> list() {
@@ -122,5 +126,27 @@ public class RestaurantController {
     } catch (EntityNotFoundException entityNotFoundException) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(entityNotFoundException.getMessage());
     }
+  }
+
+  @GetMapping("/by-shipping-fee")
+  public List<Restaurant> findByShippingFeeBetween(
+      @RequestParam BigDecimal initialFee, @RequestParam BigDecimal finalFee) {
+    return restaurantRepository.findByShippingFeeBetween(initialFee, finalFee);
+  }
+
+  @GetMapping("/by-name-and-kitchenId")
+  public List<Restaurant> findByNameAndKitchenId(
+      @RequestParam String name, @RequestParam Long kitchenId) {
+    return restaurantRepository.findByNameContainingAndKitchenId(name, kitchenId);
+  }
+
+  @GetMapping("/first-by-name")
+  public List<Restaurant> findFirstByName(@RequestParam String name) {
+    return restaurantRepository.findFirstByNameContaining(name);
+  }
+
+  @GetMapping("/top2-by-name")
+  public List<Restaurant> findTop2ByName(@RequestParam String name) {
+    return restaurantRepository.findTop2ByNameContaining(name);
   }
 }
