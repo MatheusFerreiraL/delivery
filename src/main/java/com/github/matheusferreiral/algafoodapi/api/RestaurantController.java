@@ -140,6 +140,12 @@ public class RestaurantController {
     return restaurantRepository.queryByName(name, kitchenId);
   }
 
+  @GetMapping("/by-name-and-shipping-fee")
+  public List<Restaurant> findByNameAndShippingFee(
+      @RequestParam String name, @RequestParam BigDecimal initialFee, @RequestParam BigDecimal finalFee) {
+    return restaurantRepository.find(name, initialFee, finalFee);
+  }
+
   @GetMapping("/first-by-name")
   public List<Restaurant> findFirstByName(@RequestParam String name) {
     return restaurantRepository.findFirstByNameContaining(name);

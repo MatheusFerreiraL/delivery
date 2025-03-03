@@ -9,7 +9,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
+public interface RestaurantRepository
+    extends JpaRepository<Restaurant, Long>, RestaurantRepositoryQueries {
   List<Restaurant> findByShippingFeeBetween(BigDecimal initialFee, BigDecimal finalFee);
 
   // This method is going to substitute the "findByNameContainingAndKitchenId"
