@@ -142,7 +142,9 @@ public class RestaurantController {
 
   @GetMapping("/by-name-and-shipping-fee")
   public List<Restaurant> findByNameAndShippingFee(
-      @RequestParam String name, @RequestParam BigDecimal initialFee, @RequestParam BigDecimal finalFee) {
+      @RequestParam(required = false) String name,
+      @RequestParam(required = false) BigDecimal initialFee,
+      @RequestParam(required = false) BigDecimal finalFee) {
     return restaurantRepository.find(name, initialFee, finalFee);
   }
 
