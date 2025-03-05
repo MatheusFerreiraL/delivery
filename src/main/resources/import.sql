@@ -10,3 +10,5 @@ INSERT INTO payment_method (description) VALUES ('Credit Card'), ('Cash');
 
 INSERT INTO city (name, state_id) VALUES ('Dublin', 1), ('Cork', 2);
 
+
+INSERT INTO restaurant_payment_method (restaurant_id, payment_method_id) VALUES (1, 1), (1, 2), (2, 1), (2, 2);

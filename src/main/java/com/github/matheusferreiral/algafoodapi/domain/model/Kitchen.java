@@ -1,11 +1,15 @@
 package com.github.matheusferreiral.algafoodapi.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,4 +33,9 @@ public class Kitchen {
   // use it, the column name will be the attribute name.
   @Column(name = "name", nullable = false)
   private String name;
+
+  @JsonIgnore // When serializing, this property will be ignored (avoiding a loop when listing
+  // The 'owner' of this two-way association is 'Restaurant'
+  @OneToMany(mappedBy = "kitchen")
+  private List<Restaurant> restaurants = new ArrayList<>();
 }
