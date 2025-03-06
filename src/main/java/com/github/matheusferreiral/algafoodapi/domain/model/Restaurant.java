@@ -1,6 +1,8 @@
 package com.github.matheusferreiral.algafoodapi.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,7 +36,7 @@ public class Restaurant {
 
   @Column(name = "shipping_fee", nullable = false)
   private BigDecimal shippingFee;
-  
+
   @ManyToOne
   // The join column has the same effect as the column, but we use this here due to being foreign
   // key
@@ -52,10 +54,13 @@ public class Restaurant {
   // the Restaurant entity ("restaurant_id").
   // The 'inverseJoinColumns' attribute specifies the foreign key column in the join table that
   // references the PaymentMethod entity ("payment_method_id").
+  @JsonIgnore
   @ManyToMany
   @JoinTable(
       name = "restaurant_payment_method",
       joinColumns = @JoinColumn(name = "restaurant_id"),
       inverseJoinColumns = @JoinColumn(name = "payment_method_id"))
   private List<PaymentMethod> paymentMethods = new ArrayList<>();
+
+  @Embedded private Address address;
 }

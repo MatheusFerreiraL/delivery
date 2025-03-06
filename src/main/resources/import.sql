@@ -1,6 +1,6 @@
 INSERT INTO kitchen (name) VALUES ("Brazilian"), ("Chinese");
 
-INSERT INTO restaurant (name, shipping_fee, kitchen_id) VALUES ("Musashi", 10.0, 2), ("Abraquebabra", 3.50, 1);
+INSERT INTO restaurant (name, shipping_fee, kitchen_id, address_street, address_city, address_state, address_zip) VALUES ("Musashi", 10.0, 2, '123 Dublin St', 'Dublin', 'Leinster', 'D01'), ("Abraquebabra", 3.50, 1, '456 Dublin Rd','Dublin', 'Leinster', 'D02');
 
 INSERT INTO state (name) VALUES ('Leinster'), ('Munster');
 
