@@ -11,13 +11,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Getter
 @Setter
@@ -37,6 +41,7 @@ public class Restaurant {
   @Column(name = "shipping_fee", nullable = false)
   private BigDecimal shippingFee;
 
+  @JsonIgnore
   @ManyToOne
   // The join column has the same effect as the column, but we use this here due to being foreign
   // key
@@ -62,5 +67,19 @@ public class Restaurant {
       inverseJoinColumns = @JoinColumn(name = "payment_method_id"))
   private List<PaymentMethod> paymentMethods = new ArrayList<>();
 
-  @Embedded private Address address;
+  @JsonIgnore @Embedded private Address address;
+
+  @JsonIgnore
+  @CreationTimestamp
+  @Column(nullable = false, columnDefinition = "datetime")
+  private LocalDateTime createdAt;
+
+  @JsonIgnore
+  @UpdateTimestamp
+  @Column(nullable = false, columnDefinition = "datetime")
+  private LocalDateTime updateAt;
+
+  @JsonIgnore
+  @OneToMany(mappedBy = "restaurant")
+  private List<Product> products = new ArrayList<>();
 }

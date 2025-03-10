@@ -2,6 +2,8 @@ package com.github.matheusferreiral.algafoodapi.domain.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -15,15 +17,22 @@ import lombok.ToString;
 @Embeddable
 public class Address {
 
+  @Column(name = "address_postcode")
+  private String postcode;
+
   @Column(name = "address_street")
   private String street;
 
-  @Column(name = "address_city")
-  private String city;
+  @Column(name = "address_number")
+  private String number;
 
-  @Column(name = "address_state")
-  private String state;
+  @Column(name = "address_complement")
+  private String complement;
 
-  @Column(name = "address_zip")
-  private String zip;
+  @Column(name = "address_neighborhood")
+  private String neighborhood;
+
+  @ManyToOne
+  @JoinColumn(name = "address_city_id")
+  private City city;
 }
