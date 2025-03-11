@@ -19,7 +19,7 @@ import lombok.Setter;
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-@Table(name = "group")
+@Table(name = "`group`")
 public class Group {
 
   @EqualsAndHashCode.Include

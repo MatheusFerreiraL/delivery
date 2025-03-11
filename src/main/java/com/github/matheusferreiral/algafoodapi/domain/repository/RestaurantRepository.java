@@ -25,4 +25,7 @@ public interface RestaurantRepository
   List<Restaurant> findTop2ByNameContaining(String name);
 
   boolean existsByName(String name);
+  
+  @Query("from Restaurant r JOIN FETCH r.kitchen LEFT JOIN FETCH r.paymentMethods")
+  List<Restaurant> findAll();
 }

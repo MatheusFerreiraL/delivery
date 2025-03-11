@@ -1,6 +1,7 @@
 package com.github.matheusferreiral.algafoodapi.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -41,24 +42,26 @@ public class Restaurant {
   @Column(name = "shipping_fee", nullable = false)
   private BigDecimal shippingFee;
 
-  @JsonIgnore
-  @ManyToOne
+  //  @JsonIgnore
+  @JsonIgnoreProperties({"hibernateLazyInitializer"})
+  // Usually any relationship with 'ToOne' is EAGER Loading. In this case we are modifying that
+  @ManyToOne // (fetch = FetchType.LAZY)
   // The join column has the same effect as the column, but we use this here due to being foreign
   // key
   @JoinColumn(name = "kitchen_id", nullable = false)
   private Kitchen kitchen;
 
-  // This code defines a many-to-many relationship between the Restaurant and PaymentMethod
-  // entities.
-  // The @ManyToMany annotation indicates that a restaurant can have multiple payment methods and a
-  // payment method can be used by multiple restaurants.
-  // The @JoinTable annotation specifies the join table that maps the many-to-many relationship.
-  // The 'name' attribute of @JoinTable specifies the name of the join table
-  // ("restaurant_payment_method").
-  // The 'joinColumns' attribute specifies the foreign key column in the join table that references
-  // the Restaurant entity ("restaurant_id").
-  // The 'inverseJoinColumns' attribute specifies the foreign key column in the join table that
-  // references the PaymentMethod entity ("payment_method_id").
+  /* This code defines a many-to-many relationship between the Restaurant and PaymentMethod
+  entities.
+  The @ManyToMany annotation indicates that a restaurant can have multiple payment methods and a
+  payment method can be used by multiple restaurants.
+  The @JoinTable annotation specifies the join table that maps the many-to-many relationship.
+  The 'name' attribute of @JoinTable specifies the name of the join table
+  ("restaurant_payment_method").
+  The 'joinColumns' attribute specifies the foreign key column in the join table that references
+  the Restaurant entity ("restaurant_id").
+  The 'inverseJoinColumns' attribute specifies the foreign key column in the join table that
+  references the PaymentMethod entity ("payment_method_id").*/
   @JsonIgnore
   @ManyToMany
   @JoinTable(
